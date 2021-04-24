@@ -10,13 +10,13 @@ import (
 )
 
 type Params = struct {
-	Max_level int
-	Precision float64
+	Root_Precision     float64
+	Location_Precision float64
+	N_particles        int // based on the dimension and size of interval, one must play with this
 }
 
 type Segment = struct {
 	idx   int
-	level int
 	roots []mat.Vector
 }
 
@@ -24,18 +24,53 @@ type Segment = struct {
 // which imposes no restrictions on f. A recursive bisection procedure ensures the pso-search to provide
 // as much as possible independent results.
 func FindRoots(f common.System, b_low mat.Vector, b_up mat.Vector,
+	params *Params) []mat.Vector {
+	pso_params := meta_opt_pso.Optimize(createTargetFn(f), b_low, b_up)
+	pso_params.Max_iter = 100
+	pso_params.N_particles = int(math.Max(500.0, float64(params.N_particles)))
+	roots := recFindRoots(f, b_low, b_up, params, pso_params, nil)
+	res := make([]mat.Vector, 0)
+	for _, r := range roots {
+		if !isRootContainedInList(params.Location_Precision, r, res) {
+			res = append(res, r)
+		}
+	}
+	return res
+}
+
+func isRootContainedInList(location_Precision float64, r mat.Vector, list []mat.Vector) bool {
+	for _, e := range list {
+		isSame := true
+		for idx := 0; idx < r.Len(); idx++ {
+			if math.Abs(r.AtVec(idx)-e.AtVec(idx)) > location_Precision {
+				isSame = false
+				break
+			}
+		}
+		if isSame {
+			return true
+		}
+	}
+	return false
+}
+
+func isUnderPrecision(b_low mat.Vector, b_up mat.Vector, precision float64) bool {
+	for idx := 0; idx < b_low.Len(); idx++ {
+		if math.Abs(b_low.AtVec(idx)-b_up.AtVec(idx)) < precision {
+			return true
+		}
+	}
+	return false
+}
+
+func recFindRoots(f common.System, b_low mat.Vector, b_up mat.Vector,
 	params *Params, pso_params *pso.Params, segment *Segment) []mat.Vector {
 	res := make([]mat.Vector, 0)
 	if segment == nil {
-		segment = &Segment{idx: 0, level: 0, roots: make([]mat.Vector, 0)}
+		segment = &Segment{idx: 0, roots: make([]mat.Vector, 0)}
 	}
-	if segment.level > params.Max_level {
+	if isUnderPrecision(b_low, b_up, params.Location_Precision) {
 		return res
-	}
-	if pso_params == nil {
-		pso_params = meta_opt_pso.Optimize(createTargetFn(f), b_low, b_up)
-		pso_params.Max_iter = 100
-		pso_params.N_particles = 500 //TODO make depend on dim
 	}
 	if len(segment.roots) > 0 {
 		res = append(res, findRootsInDeeperLevels(f, b_low, b_up, params, pso_params, segment)...)
@@ -67,10 +102,10 @@ func findRootsInDeeperLevels(f common.System, b_low mat.Vector, b_up mat.Vector,
 			segment_up_roots = append(segment_up_roots, r)
 		}
 	}
-	segment_low := &Segment{idx: idx, level: segment.level + 1, roots: segment_low_roots}
-	res = append(res, FindRoots(f, b_low, b_center_up, params, pso_params, segment_low)...)
-	segment_up := &Segment{idx: idx, level: segment.level + 1, roots: segment_up_roots}
-	res = append(res, FindRoots(f, b_center_low, b_up, params, pso_params, segment_up)...)
+	segment_low := &Segment{idx: idx, roots: segment_low_roots}
+	res = append(res, recFindRoots(f, b_low, b_center_up, params, pso_params, segment_low)...)
+	segment_up := &Segment{idx: idx, roots: segment_up_roots}
+	res = append(res, recFindRoots(f, b_center_low, b_up, params, pso_params, segment_up)...)
 	return res
 }
 
@@ -98,7 +133,7 @@ func searchRoot(f common.System, b_low mat.Vector, b_up mat.Vector, pso_params *
 	isRoot := true
 	y_0 := f(x_0)
 	for i := 0; i < x_0.Len(); i++ {
-		isRoot = math.Abs(y_0.AtVec(i)) <= params.Precision
+		isRoot = math.Abs(y_0.AtVec(i)) <= params.Root_Precision
 		if !isRoot {
 			return nil
 		}

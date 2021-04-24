@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"main/roots"
+	"math"
 
 	"gonum.org/v1/gonum/mat"
 )
@@ -14,11 +15,11 @@ func main() {
 		x0 := x.AtVec(0)
 		x1 := x.AtVec(1)
 		return mat.NewVecDense(2, []float64{
-			(1.0 - x1) * x0,
+			(1.0 - x1) * math.Sin(x0),
 			x1 * (2.0 - x0)})
 	}
-	params := &roots.Params{Max_level: 6, Precision: 0.1}
-	roots := roots.FindRoots(f, b_low, b_up, params, nil, nil)
+	params := &roots.Params{Location_Precision: 0.5, Root_Precision: 0.1}
+	roots := roots.FindRoots(f, b_low, b_up, params)
 	for _, r := range roots {
 		fmt.Println(r)
 	}

@@ -16,8 +16,8 @@ func TestFindRoots(t *testing.T) {
 			(1.0 - x1) * x0,
 			x1 * (2.0 - x0)})
 	}
-	params := &Params{Max_level: 4, Precision: 0.1}
-	roots := FindRoots(f, b_low, b_up, params, nil, nil)
+	params := &Params{Location_Precision: 0.5, Root_Precision: 0.1}
+	roots := FindRoots(f, b_low, b_up, params)
 	for _, r := range roots {
 		t.Log(r)
 	}
