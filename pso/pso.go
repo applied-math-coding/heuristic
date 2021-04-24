@@ -14,7 +14,6 @@ type Params = struct {
 	N_particles  int
 	LearningRate float64
 	Max_iter     int
-	Sat_level    float64
 }
 
 func Optimize(f common.Target, b_low mat.Vector, b_up mat.Vector, params *Params) mat.Vector {
@@ -23,8 +22,7 @@ func Optimize(f common.Target, b_low mat.Vector, b_up mat.Vector, params *Params
 	v := initVelocity(b_low, b_up, params.N_particles)
 	x := initParticlePositions(p)
 	value_g := f(g)
-	satisfied := false
-	for iter := 0; iter < params.Max_iter && !satisfied; iter++ {
+	for iter := 0; iter < params.Max_iter; iter++ {
 		for i := 0; i < params.N_particles; i++ {
 			updateVelocity(v[i], x[i], p[i], g, params)
 			updateParticlePositions(x[i], v[i], params.LearningRate, b_low, b_up)

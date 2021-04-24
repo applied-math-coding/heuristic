@@ -16,14 +16,15 @@ func TestPso(t *testing.T) {
 		Omega:        1.0,
 		Phi_p:        2.0,
 		Phi_g:        2.0,
-		LearningRate: 0.5,
-		Sat_level:    0.5}
+		LearningRate: 0.5}
 	f := func(x mat.Vector) float64 {
 		x0 := x.AtVec(0)
 		x1 := x.AtVec(1)
 		return math.Pow((1.0-x1)*x0, 2.0) + math.Pow(x1*(2.0-x0), 2.0)
 	}
-	t.Log(Optimize(f, b_low, b_up, params))
+	min := Optimize(f, b_low, b_up, params)
+	t.Log(min)
+	t.Log(f(min))
 }
 
 func TestInitVelocity(t *testing.T) {

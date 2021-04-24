@@ -25,8 +25,7 @@ func Optimize(f common.Target, b_low mat.Vector, b_up mat.Vector) *pso.Params {
 				Phi_g:        x.AtVec(2),
 				N_particles:  1000,
 				LearningRate: x.AtVec(3),
-				Max_iter:     10,
-				Sat_level:    0.01}))
+				Max_iter:     10}))
 		})
 	return &pso.Params{
 		Omega:        optimal.AtVec(0),
