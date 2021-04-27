@@ -18,8 +18,12 @@ func main() {
 			(1.0 - x1) * math.Sin(x0),
 			x1 * (2.0 - x0)})
 	}
-	params := &roots.Params{Location_Precision: 0.5, Root_Precision: 0.1}
-	roots := roots.FindRoots(f, b_low, b_up, params)
+	params := &roots.Params{
+		Location_Precision: 0.5,
+		Root_Recognition:   0.1,
+		N_particles:        500,
+		Precision:          0.0000001}
+	roots := roots.FindRoots(f, nil, b_low, b_up, params)
 	for _, r := range roots {
 		fmt.Println(r)
 	}

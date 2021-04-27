@@ -3,6 +3,7 @@ package roots
 import (
 	"main/common"
 	"main/meta_opt_pso"
+	"main/newton"
 	"main/pso"
 	"math"
 
@@ -10,9 +11,10 @@ import (
 )
 
 type Params = struct {
-	Root_Precision     float64
-	Location_Precision float64
-	N_particles        int // based on the dimension and size of interval, one must play with this
+	Root_Recognition   float64 // f(x) to be recognized as root by particles
+	Location_Precision float64 // min distance to distinguish several roots
+	N_particles        int     // based on the dimension and size of interval, one must play with this
+	Precision          float64 // aimed precission of root
 }
 
 type Segment = struct {
@@ -23,7 +25,9 @@ type Segment = struct {
 // FindRoots tries to find all roots of f in given multi-dim-interval. The algorithm uses a heuristic search (PSO)
 // which imposes no restrictions on f. A recursive bisection procedure ensures the pso-search to provide
 // as much as possible independent results.
-func FindRoots(f common.System, b_low mat.Vector, b_up mat.Vector,
+// In case the system is n*n and a derivative is supplied, it is used for a Newton-method to refine roots.
+// If the system is n*n and no derivative is supplied, the derivative will be approximated internally.
+func FindRoots(f common.System, D common.Derivative, b_low mat.Vector, b_up mat.Vector,
 	params *Params) []mat.Vector {
 	pso_params := meta_opt_pso.Optimize(createTargetFn(f), b_low, b_up)
 	pso_params.Max_iter = 100
@@ -33,6 +37,24 @@ func FindRoots(f common.System, b_low mat.Vector, b_up mat.Vector,
 	for _, r := range roots {
 		if !isRootContainedInList(params.Location_Precision, r, res) {
 			res = append(res, r)
+		}
+	}
+	m := f(b_low).Len()
+	if m == b_low.Len() {
+		return RefineRoots(f, D, res, params)
+	}
+	return res
+}
+
+func RefineRoots(f common.System, D common.Derivative, roots []mat.Vector, params *Params) []mat.Vector {
+	res := make([]mat.Vector, len(roots))
+	for idx, r := range roots {
+		refined, errFindRoot := newton.FindRoot(
+			f, D, r, &newton.Params{Max_iter: 1000, Precision: params.Precision})
+		if errFindRoot != nil {
+			res[idx] = r
+		} else {
+			res[idx] = refined
 		}
 	}
 	return res
@@ -132,7 +154,7 @@ func searchRoot(f common.System, b_low mat.Vector, b_up mat.Vector, pso_params *
 	isRoot := true
 	y_0 := f(x_0)
 	for i := 0; i < x_0.Len(); i++ {
-		isRoot = math.Abs(y_0.AtVec(i)) <= params.Root_Precision
+		isRoot = math.Abs(y_0.AtVec(i)) <= params.Root_Recognition
 		if !isRoot {
 			return nil
 		}
