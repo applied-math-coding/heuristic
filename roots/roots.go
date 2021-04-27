@@ -92,7 +92,6 @@ func findRootsInDeeperLevels(f common.System, b_low mat.Vector, b_up mat.Vector,
 	res := make([]mat.Vector, 0)
 	idx := int(math.Mod(float64(segment.idx)+1.0, float64(b_low.Len())))
 	b_center_up, b_center_low := splitInterval(idx, b_low, b_up)
-	// TODO here one possible could try to parallelize
 	segment_low_roots := make([]mat.Vector, 0)
 	segment_up_roots := make([]mat.Vector, 0)
 	for _, r := range segment.roots {

@@ -10,6 +10,7 @@ import (
 
 type Target = func(x mat.Vector) float64
 type System = func(x mat.Vector) mat.Vector
+type Derivative = func(x mat.Vector) mat.Matrix
 
 var EPSILON = math.Nextafter(1.0, 2.0) - 1.0
 
