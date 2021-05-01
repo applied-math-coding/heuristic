@@ -37,11 +37,15 @@ func RandomDataInBounds(b_low mat.Vector, b_up mat.Vector) *mat.VecDense {
 	return v
 }
 
-func getRandomSource() int64 {
+func GetNextSeed() int64 {
 	seed++
-	return time.Now().UnixNano() + seed
+	return seed
+}
+
+func GetRandomSource() int64 {
+	return time.Now().UnixNano() + GetNextSeed()
 }
 
 func GetNewRand() *rand.Rand {
-	return rand.New(rand.NewSource(getRandomSource()))
+	return rand.New(rand.NewSource(GetRandomSource()))
 }

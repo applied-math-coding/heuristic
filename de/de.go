@@ -1,7 +1,6 @@
 package de
 
 import (
-	"fmt"
 	"main/common"
 
 	"gonum.org/v1/gonum/mat"
@@ -21,7 +20,6 @@ func Optimize(f common.Target, b_low mat.Vector, b_up mat.Vector, params *Params
 	global_best_val := f(global_best)
 	for iter := 0; iter <= params.Max_iter; iter++ {
 		rand := common.GetNewRand()
-		//TODO parallelize
 		for agentIdx, x := range agents {
 			a := agents[rand.Intn(n)]
 			b := agents[rand.Intn(n)]
@@ -39,7 +37,6 @@ func Optimize(f common.Target, b_low mat.Vector, b_up mat.Vector, params *Params
 			y_val := f(y)
 			if y_val < f(x) {
 				agents[agentIdx] = y
-				fmt.Println(y_val) //TODO
 				if y_val < global_best_val {
 					global_best = y
 					global_best_val = y_val

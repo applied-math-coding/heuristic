@@ -2,29 +2,45 @@ package main
 
 import (
 	"fmt"
-	"main/de"
+	"main/abc"
 	"math"
 
 	"gonum.org/v1/gonum/mat"
 )
 
 func main() {
-	// de
+	// abc
 	b_low := mat.NewVecDense(2, []float64{-10.0, -10.0})
 	b_up := mat.NewVecDense(2, []float64{10.0, 10.0})
-	params := &de.Params{
-		N_agents: 2000,
-		Max_iter: 500,
-		F:        0.8,
-		CR:       0.9}
+	params := &abc.Params{
+		N_bees:        100,
+		Abandon_limit: 10,
+		Max_iter:      100}
 	f := func(x mat.Vector) float64 {
 		x0 := x.AtVec(0)
 		x1 := x.AtVec(1)
 		return math.Pow((1.0-x1)*x0, 2.0) + math.Pow(x1*(2.0-x0), 2.0)
 	}
-	min := de.Optimize(f, b_low, b_up, params)
+	min := abc.Optimize(f, b_low, b_up, params)
 	fmt.Println(min)
 	fmt.Println(f(min))
+
+	// // de
+	// b_low := mat.NewVecDense(2, []float64{-10.0, -10.0})
+	// b_up := mat.NewVecDense(2, []float64{10.0, 10.0})
+	// params := &de.Params{
+	// 	N_agents: 2000,
+	// 	Max_iter: 500,
+	// 	F:        0.8,
+	// 	CR:       0.9}
+	// f := func(x mat.Vector) float64 {
+	// 	x0 := x.AtVec(0)
+	// 	x1 := x.AtVec(1)
+	// 	return math.Pow((1.0-x1)*x0, 2.0) + math.Pow(x1*(2.0-x0), 2.0)
+	// }
+	// min := de.Optimize(f, b_low, b_up, params)
+	// fmt.Println(min)
+	// fmt.Println(f(min))
 
 	// // roots
 	// b_low := mat.NewVecDense(2, []float64{-10.0, -10.0})
