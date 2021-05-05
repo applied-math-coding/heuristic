@@ -1,7 +1,7 @@
 package de
 
 import (
-	"main/common"
+	"github.com/applied-math-coding/heuristic/common"
 
 	"gonum.org/v1/gonum/mat"
 )

@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"main/abc"
 	"math"
+
+	"github.com/applied-math-coding/heuristic/abc"
 
 	"gonum.org/v1/gonum/mat"
 )

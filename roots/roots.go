@@ -1,11 +1,12 @@
 package roots
 
 import (
-	"main/common"
-	"main/meta_opt_pso"
-	"main/newton"
-	"main/pso"
 	"math"
+
+	"github.com/applied-math-coding/heuristic/common"
+	"github.com/applied-math-coding/heuristic/meta_opt_pso"
+	"github.com/applied-math-coding/heuristic/newton"
+	"github.com/applied-math-coding/heuristic/pso"
 
 	"gonum.org/v1/gonum/mat"
 )

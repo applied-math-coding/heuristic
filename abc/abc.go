@@ -1,7 +1,7 @@
 package abc
 
 import (
-	"main/common"
+	"github.com/applied-math-coding/heuristic/common"
 
 	"golang.org/x/exp/rand"
 	"gonum.org/v1/gonum/mat"

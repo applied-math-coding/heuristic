@@ -1,9 +1,9 @@
 package meta_opt_pso
 
 import (
-	"main/common"
-	"main/lus"
-	"main/pso"
+	"github.com/applied-math-coding/heuristic/common"
+	"github.com/applied-math-coding/heuristic/lus"
+	"github.com/applied-math-coding/heuristic/pso"
 
 	"gonum.org/v1/gonum/mat"
 )

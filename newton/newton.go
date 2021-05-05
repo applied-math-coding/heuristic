@@ -1,8 +1,9 @@
 package newton
 
 import (
-	"main/common"
 	"math"
+
+	"github.com/applied-math-coding/heuristic/common"
 
 	"gonum.org/v1/gonum/diff/fd"
 	"gonum.org/v1/gonum/mat"
