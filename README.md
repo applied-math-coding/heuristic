@@ -1,5 +1,5 @@
 # Heuristic Optimization Algorithms
-Golang implementation of various heuristic optimization algorithms.<br>
+Provides Golang implementations of various heuristic optimization algorithms.<br>
 The code is not meant to be production ready nor super optimized.<br>
 Though it can be used for educational and research related tasks.
 
@@ -72,7 +72,7 @@ func main() {
 Add "github.com/applied-math-coding/heuristic/de" to your imports.<br>
 The following code searches a minimum of the function f:
 ```
-func main(){
+func main() {
 	b_low := mat.NewVecDense(2, []float64{-10.0, -10.0})
 	b_up := mat.NewVecDense(2, []float64{10.0, 10.0})
 	params := &de.Params{
@@ -95,7 +95,7 @@ func main(){
 Add "github.com/applied-math-coding/heuristic/lus" to your imports.<br>
 The following code searches a minimum of the function f:
 ```
-func main(){
+func main() {
 	b_low := mat.NewVecDense(2, []float64{-10.0, -10.0})
 	b_up := mat.NewVecDense(2, []float64{10.0, 10.0})
 	f := func(x mat.Vector) float64 {
@@ -108,8 +108,49 @@ func main(){
 	fmt.Println(f(min))
 }
 ```
+A use case of how this can be applied in order to supply PSO with optimal parameter, can be find at "./meta_opt_pso/meta_opt_pso.go".
 
+### Global Root-Finder:
+Add "github.com/applied-math-coding/heuristic/roots" to your imports.<br>
+The following tries to find all roots for a function f which maps R^n to R^m. Internally it applies an interval-bisection
+to search for local roots at various positions. The roots are search by applying the PSO onto |f|^2.
+```
+func main() {
+	b_low := mat.NewVecDense(2, []float64{-10.0, -10.0})
+	b_up := mat.NewVecDense(2, []float64{10.0, 10.0})
+	f := func(x mat.Vector) mat.Vector {
+		x0 := x.AtVec(0)
+		x1 := x.AtVec(1)
+		return mat.NewVecDense(2, []float64{
+			(1.0 - x1) * math.Sin(x0),
+			x1 * (2.0 - x0)})
+	}
+	params := &roots.Params{
+		Location_Precision: 0.5,
+		Root_Recognition:   0.1,
+		N_particles:        500,
+		Precision:          0.0000001}
+	roots := roots.FindRoots(f, nil, b_low, b_up, params)
+	for _, r := range roots {
+		fmt.Println(r)
+	}
+}
+```
 
+## Further resources
+A good overview about<br>
+
+PSO:<br>
+https://en.wikipedia.org/wiki/Particle_swarm_optimization
+
+ABC:<br>
+http://www.scholarpedia.org/article/Artificial_bee_colony_algorithm
+
+DE:<br>
+https://en.wikipedia.org/wiki/Differential_evolution
+
+Meta-optimization (LSU):<br>
+https://www.sciencedirect.com/science/article/abs/pii/S1568494609001549?casa_token=VeVpKW0fOlkAAAAA:i60-D9lgWAZnnklmihTMEjztvm3ZtGJVXdvCYIE9AUtSM4xsa3TzwCtRbbaLczDaJezsaOSIDr0
 
 
 
