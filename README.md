@@ -1,7 +1,7 @@
 # Heuristic Optimization Algorithms
 Provides Golang implementations of various heuristic optimization algorithms.<br>
 The code is not meant to be production ready nor super optimized.<br>
-Though it can be used for educational and research related tasks.
+Though it can be used for education and research related tasks.
 
 ## Installation:
 On your project's root folder (the one which contains go.mod) do run:
@@ -108,12 +108,12 @@ func main() {
 	fmt.Println(f(min))
 }
 ```
-A use case of how this can be applied in order to supply PSO with optimal parameter, can be find at "./meta_opt_pso/meta_opt_pso.go".
+A use case of how this can be applied in order to supply PSO with optimal parameter, can be found at "./meta_opt_pso/meta_opt_pso.go".
 
 ### Global Root-Finder:
 Add "github.com/applied-math-coding/heuristic/roots" to your imports.<br>
 The following tries to find all roots for a function f which maps R^n to R^m. Internally it applies an interval-bisection
-to search for local roots at various positions. The roots are search by applying the PSO onto |f|^2.
+to search for local roots at various positions. The roots are searched by applying the PSO onto |f|^2.
 ```
 func main() {
 	b_low := mat.NewVecDense(2, []float64{-10.0, -10.0})
@@ -138,7 +138,6 @@ func main() {
 ```
 
 ## Further resources
-A good overview about<br>
 
 PSO:<br>
 https://en.wikipedia.org/wiki/Particle_swarm_optimization
